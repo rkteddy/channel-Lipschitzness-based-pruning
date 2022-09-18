@@ -6,7 +6,7 @@ import argparse
 from tqdm import tqdm
 
 from data import get_dataloader
-from model import get_model
+from models import get_model
 
 
 def train(net, data_loader, optimizer, scheduler):
@@ -46,39 +46,42 @@ def val(net, data_loader):
 
         n_correct += (prediction==targets).sum()
         n_total += targets.shape[0]
-        
+
     acc = n_correct / n_total * 100
 
     return acc
 
 
-def save(model, args):
+def save(model, trigger, args):
     if not os.path.exists(args.checkpoint):
         os.mkdir(args.checkpoint)
-    file_name = f'{args.model}_{args.attack_type}_{args.trigger_size}_{args.poisoning_rate}.pth'
+    file_name = f'{args.model}_{args.attack_type}_{args.trigger_size}_{args.poisoning_rate}_{args.manual_seed}.pth'
     path = os.path.join(args.checkpoint, file_name)
-    torch.save(model.state_dict(), path)
+    torch.save({'state_dict': model.state_dict(),
+                'trigger': trigger}, path)
     print(f'Checkpoint saved at {path}')
 
 
 def main(args):
     print(args)
-    num_classes, train_loader, val_loader, holdout_loader, test_clean_loader, test_poisoned_loader = get_dataloader(args)
+    num_classes, train_loader, val_loader, holdout_loader, test_clean_loader, test_poisoned_loader, trigger = get_dataloader(args)
 
     net = get_model(args.model, num_classes).to(args.device)
-
+ 
     optimizer = torch.optim.SGD(net.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.epochs)
 
     print('Start Trainig')
     for epoch in range(args.epochs):
+        print('Epoch %d:' % epoch)
         loss = train(net, train_loader, optimizer, scheduler)
-        acc = val(net, val_loader)
-        print('Validation accuracy: %.2f' % acc)
-        acc, asr = val(net, test_clean_loader), val(net, test_poisoned_loader)
-        print('Test clean accuracy: %.2f' % acc)
-        print('Test attack success rate: %.2f' % asr)
-        save(net, args)
+        if (epoch+1) % 10 == 0:
+            acc = val(net, val_loader)
+            print('Validation accuracy: %.2f' % acc)
+            acc, asr = val(net, test_clean_loader), val(net, test_poisoned_loader)
+            print('Test clean accuracy: %.2f' % acc)
+            print('Test attack success rate: %.2f' % asr)
+            save(net, trigger, args)
 
     print('Training finished')
 
@@ -94,13 +97,13 @@ if __name__ == '__main__':
     # Optimization options
     parser.add_argument('--epochs', default=150, type=int, metavar='N',
                         help='number of total epochs to run')
-    parser.add_argument('--batch-size', default=128, type=int, metavar='N',
+    parser.add_argument('--batch-size', default=256, type=int, metavar='N',
                         help='batch size')
     parser.add_argument('--lr', '--learning-rate', default=0.1, type=float,
                         metavar='LR', help='initial learning rate')
     parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
                         help='momentum')
-    parser.add_argument('--weight_decay', '--wd', default=5e-4, type=float,
+    parser.add_argument('--weight-decay', '--wd', default=5e-4, type=float,
                         metavar='W', help='weight decay (default: 5e-4)')
 
     # Checkpoints
@@ -124,5 +127,10 @@ if __name__ == '__main__':
     parser.add_argument('--poisoning-rate', type=float, default=0.1, help='backdoor training sample ratio.')
     parser.add_argument('--trigger-size', type=int, default=3, help='size of square backdoor trigger.')
     args = parser.parse_args()
+    
+    torch.manual_seed(args.manual_seed)
+    torch.cuda.manual_seed(args.manual_seed)
+    torch.backends.cudnn.deterministic=True
+    
     main(args)
 
