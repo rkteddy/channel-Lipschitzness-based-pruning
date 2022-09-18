@@ -3,8 +3,8 @@ import torch.nn as nn
 
 """
     Input:
-        -net: model to be pruned
-        -u: coefficient that determines the pruning threshold
+        - net: model to be pruned
+        - u: coefficient that determines the pruning threshold
     Output:
         None (in-place modification on the model)
 """

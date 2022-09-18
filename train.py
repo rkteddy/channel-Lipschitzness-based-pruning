@@ -97,7 +97,7 @@ if __name__ == '__main__':
     # Optimization options
     parser.add_argument('--epochs', default=150, type=int, metavar='N',
                         help='number of total epochs to run')
-    parser.add_argument('--batch-size', default=256, type=int, metavar='N',
+    parser.add_argument('--batch-size', default=128, type=int, metavar='N',
                         help='batch size')
     parser.add_argument('--lr', '--learning-rate', default=0.1, type=float,
                         metavar='LR', help='initial learning rate')
