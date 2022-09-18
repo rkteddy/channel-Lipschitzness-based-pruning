@@ -4,5 +4,5 @@
 /.ipynb_checkpoints
 /__pycache__
 /draw.py
-/test.py
+/test.ipynb
 /finetune.py
