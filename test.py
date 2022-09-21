@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from data import get_dataloader
 from models import get_model
-from defense import CLP, DDE
+from defense import CLP
 
 def val(net, data_loader):
     with torch.no_grad():
@@ -71,23 +71,6 @@ def main(args):
     acc, asr = val(net, test_clean_loader), val(net, test_poisoned_loader)
     print('Test clean accuracy: %.2f' % acc)
     print('Test attack success rate: %.2f' % asr)
-
-
-
-    # print('Before prunning')
-    # acc = val(net, val_loader)
-    # print('Validation accuracy: %.2f' % acc)
-    # acc, asr = val(net, test_clean_loader), val(net, test_poisoned_loader)
-    # print('Test clean accuracy: %.2f' % acc)
-    # print('Test attack success rate: %.2f' % asr)
-    
-    # DDE(net, args.u, train_loader, args)
-    # print('After DDE prunning')
-    # acc = val(net, val_loader)
-    # print('Validation accuracy: %.2f' % acc)
-    # acc, asr = val(net, test_clean_loader), val(net, test_poisoned_loader)
-    # print('Test clean accuracy: %.2f' % acc)
-    # print('Test attack success rate: %.2f' % asr)
 
 if __name__ == '__main__':
 
