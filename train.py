@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 from data import get_dataloader
 from models import get_model
+from utils import save
 
 
 def train(net, data_loader, optimizer, scheduler):
@@ -50,16 +51,6 @@ def val(net, data_loader):
     acc = n_correct / n_total * 100
 
     return acc
-
-
-def save(model, trigger, args):
-    if not os.path.exists(args.checkpoint):
-        os.mkdir(args.checkpoint)
-    file_name = f'{args.model}_{args.attack_type}_{args.trigger_size}_{args.poisoning_rate}_{args.manual_seed}.pth'
-    path = os.path.join(args.checkpoint, file_name)
-    torch.save({'state_dict': model.state_dict(),
-                'trigger': trigger}, path)
-    print(f'Checkpoint saved at {path}')
 
 
 def main(args):

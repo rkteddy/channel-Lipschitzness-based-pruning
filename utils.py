@@ -1,4 +1,5 @@
 import torch
+import os
 
 class TensorsDataset(torch.utils.data.Dataset):
     def __init__(self, data_tensor, target_tensor=None, transforms=None, target_transforms=None):
@@ -39,20 +40,19 @@ class TensorsDataset(torch.utils.data.Dataset):
         return self.data_tensor.size(0)
 
 
-def add_trigger(image, trigger, attack_type):
-    if attack_type == 'badnets':
-        trigger_size = trigger.shape[-1]
-        trigger = trigger.reshape(1, 3, trigger_size, trigger_size)
-        trigger_image = image.clone()
-        trigger_image[:, :, -trigger_size:, -trigger_size:] = trigger
-        return trigger_image
-    elif attack_type == 'blended':
-        trigger_size = trigger.shape[-1]
-        trigger = trigger.reshape(1, 3, trigger_size, trigger_size)
-        trigger_image = image.clone()
-        trigger_image[:, :, -trigger_size:, -trigger_size:] = \
-            trigger_image[:, :, -trigger_size:, -trigger_size:] * 0.8 + trigger * 0.2
-        return trigger_image
-    else:
-        raise
+def save(model, trigger, args):
+    if not os.path.exists(args.checkpoint):
+        os.mkdir(args.checkpoint)
+    file_name = f'{args.model}_{args.attack_type}_{args.trigger_size}_{args.poisoning_rate}_{args.manual_seed}.pth'
+    path = os.path.join(args.checkpoint, file_name)
+    torch.save({'state_dict': model.state_dict(),
+                'trigger': trigger}, path)
+    print(f'Checkpoint saved at {path}')
 
+
+def load_checkpoint(args):
+    file_name = f'{args.model}_{args.attack_type}_{args.trigger_size}_{args.poisoning_rate}_{args.manual_seed}.pth'
+    path = os.path.join(args.checkpoint, file_name)
+    ckpt = torch.load(path)
+    print(f'Checkpoint loaded from {path}')
+    return ckpt

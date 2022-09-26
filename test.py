@@ -8,6 +8,7 @@ from tqdm import tqdm
 from data import get_dataloader
 from models import get_model
 from defense import CLP
+from utils import save, load_checkpoint
 
 def val(net, data_loader):
     with torch.no_grad():
@@ -28,21 +29,6 @@ def val(net, data_loader):
 
     return acc
 
-
-def save(model, args):
-    if not os.path.exists(args.checkpoint):
-        os.mkdir(args.checkpoint)
-    file_name = f'{args.model}_{args.attack_typebu}_{args.trigger_size}_{args.poisoning_rate}_{args.manual_seed}.pth'
-    path = os.path.join(args.checkpoint, file_name)
-    torch.save(model.state_dict(), path)
-    print(f'Checkpoint saved at {path}')
-
-def load_checkpoint(args):
-    file_name = f'{args.model}_{args.attack_type}_{args.trigger_size}_{args.poisoning_rate}_{args.manual_seed}.pth'
-    path = os.path.join(args.checkpoint, file_name)
-    ckpt = torch.load(path)
-    print(f'Checkpoint loaded from {path}')
-    return ckpt
 
 def main(args):
     print(args)
