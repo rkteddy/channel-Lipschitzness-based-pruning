@@ -40,7 +40,7 @@ def get_dataloader(args, trigger=None):
     transform_test = transforms.Normalize(train_img.mean([0, 2, 3]), train_img.std([0, 2, 3]))
 
     if trigger is None:
-        trigger = torch.randn(3, args.trigger_size, args.trigger_size)
+        trigger = torch.randn(3, args.trigger_size, args.trigger_size).sigmoid()
         
     num_poisoned = int(args.poisoning_rate * 0.95 * len(train_set))
     num_train = int(0.95 * len(train_set))
