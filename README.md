@@ -23,6 +23,9 @@ python test.py --attack-type badnets --poisoning-rate 0.1 --trigger-size 3 --man
 ```
 Note that the hypereparameters should be consistent with the previous trained model.
 
+## Notification
+
+If you are testing CLP on other network architectures, e.g. Preact ResNet or VGG, please accordingly change the code of CLP to better fit the architecture.
 
 ## Citation
 
