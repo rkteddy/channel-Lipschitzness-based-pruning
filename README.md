@@ -2,6 +2,8 @@
 
 Source code of ***Data-free Backdoor Removal based on Channel Lipschitzness***, in European Conference on Computer Vision (**ECCV**), 2022.
 
+Please refer to [this repository](https://github.com/RJ-T/NIPS2022_EP_BNP) for the source code of our NIPS 2022 paper Pre-activation Distributions Expose Backdoor Neurons.
+
 ![](channel-lips.png "illustration of channel lipschitz constant")
 
 ## Abstract
