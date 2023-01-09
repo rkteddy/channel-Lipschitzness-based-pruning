@@ -11,7 +11,7 @@ Recent studies have shown that Deep Neural Networks (DNNs) are vulnerable to the
 
 Run the following code to train a poisoned model:
 ```
-python train.py --attack-type badnets --poisoning-rate 0.1 --trigger-size 3 --mannual-seed 0
+python train.py --attack-type badnets --poisoning-rate 0.1 --trigger-size 3 --manual-seed 0
 ```
 Feel free to change the hyperparameters to adapt to your desired settings.
 
@@ -19,7 +19,7 @@ Feel free to change the hyperparameters to adapt to your desired settings.
 
 Recover the model with CLP:
 ```
-python test.py --attack-type badnets --poisoning-rate 0.1 --trigger-size 3 --mannual-seed 0
+python test.py --attack-type badnets --poisoning-rate 0.1 --trigger-size 3 --manual-seed 0
 ```
 Note that the hypereparameters should be consistent with the previous trained model.
 
